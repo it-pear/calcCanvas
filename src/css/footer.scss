@@ -1,0 +1,29 @@
+.my-footer {
+  .q-toolbar {
+    padding: 10px 17px;
+    min-height: 50px;
+    .q-btn {
+      border-radius: 2px;
+      &:first-child {
+        padding: 10px 12px;
+        margin-right: 14px;
+        .q-icon {
+          margin-right: 8px;
+        }
+        .block {
+          font-weight: 600;
+          font-size: 12px;
+          line-height: 14px;
+        }
+      }
+      &:last-child {
+        padding: 12px 12px;
+        .block {
+          font-weight: 400;
+          font-size: 12px;
+          line-height: 14px;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+.q-drawer--left {
+  width: 60px !important;
+  background: $dark;
+  border-radius: 2px;
+  position: fixed;
+  left: 17px;
+  top: 14px;
+  height: max-content;
+}
+.q-drawer--right {
+  width: 150px !important;
+  position: fixed;
+  right: 17px;
+  top: 14px;
+  height: max-content;
+  .btn-back {
+    padding: 6px 0;
+    width: 100%;
+    .block {
+      font-weight: 400;
+      font-size: 11px;
+      line-height: 13px;
+    }
+  }
+}
