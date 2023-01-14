@@ -11,9 +11,15 @@
         label="Назад в калькулятор" 
         class="btn-back"
       />
-      <div class="section-btn">
-
-      </div>
+      <NavBar />
+      <MiniDashboard />
+      <q-select 
+        outlined 
+        v-model="model" 
+        :options="options"
+        class="my-select" 
+        dropdown-icon="svguse:icons/allIcons.svg#arrow"
+      />
     </q-drawer>
 
     <q-page-container>
@@ -23,7 +29,7 @@
     <q-footer class="bg-dark text-white my-footer">
       <q-toolbar>
         <q-btn 
-          style="background: goldenrod;" 
+          class="bg-orange"
         >
           <q-icon
             color="grey"
@@ -45,14 +51,39 @@
 <script>
 import { ref } from 'vue'
 import EssentialLink from 'components/EssentialLink'
+import NavBar from 'components/NavBar'
+import MiniDashboard from 'components/MiniDashboard'
 
 export default {
   components: {
-    EssentialLink
+    EssentialLink,
+    NavBar,
+    MiniDashboard
   },
   setup () {
     const leftDrawerOpen = ref(false)
     const rightDrawerOpen = ref(false)
+
+    const model = ref(
+      {
+        label: 'Миллиметры',
+        value: 'mm'
+      }
+    )
+    const options = ref([
+      {
+        label: 'Миллиметры',
+        value: 'mm'
+      },
+      {
+        label: 'Сантиметры',
+        value: 'cm'
+      },
+      {
+        label: 'Метры',
+        value: 'm'
+      },
+    ])
 
     return {
       leftDrawerOpen,
@@ -63,7 +94,9 @@ export default {
       rightDrawerOpen,
       toggleRightDrawer () {
         rightDrawerOpen.value = !rightDrawerOpen.value
-      }
+      },
+      model,
+      options
     }
   }
 }

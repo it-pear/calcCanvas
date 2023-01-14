@@ -1,0 +1,36 @@
+.mini-dashboard {
+  background: #FFFFFF;
+  border: 1px solid #E8E8E8;
+  box-shadow: 5px 8px 18px rgba(98, 94, 88, 0.12);
+  border-radius: 2px;
+  display: flex;
+  flex-wrap: nowrap;
+  width: max-content;
+  padding: 16px 20px;
+  margin-top: 8px;
+  margin-bottom: 23px;
+  .item {
+    margin-right: 26px;
+    &:last-child {
+      margin-right: 0;
+    }
+    .title {
+      font-weight: 600;
+      font-size: 15px;
+      line-height: 18px;
+      color: #2B2B2B;
+      margin-bottom: 2px;
+    }
+    ul {
+      padding: 0;
+      li {
+        margin-top: 8px;
+        list-style: none;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 17px;
+        color: #696969;
+      }
+    }
+  }
+}

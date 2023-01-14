@@ -13,8 +13,14 @@
   right: 17px;
   top: 14px;
   height: max-content;
+  .q-drawer__content {
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
   .btn-back {
-    padding: 6px 0;
+    padding: 12.5px 0;
     width: 100%;
     .block {
       font-weight: 400;

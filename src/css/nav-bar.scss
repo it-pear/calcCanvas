@@ -1,0 +1,16 @@
+.nav-bar {
+  .section-btn {
+    min-width: 150px;
+    height: 60px;
+    background: $dark;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+  .section-btn-func {
+    margin-top: 52px;
+  }
+}

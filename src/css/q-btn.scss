@@ -2,3 +2,46 @@
   display: flex;
   align-items: center;
 }
+.q-btn-nav {
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  
+  &:before {
+    box-shadow: none;
+  }
+  .q-icon {
+    color: white;
+  }
+  .q-icon-fill {
+    stroke: white;
+    color: $dark;
+  }
+  &.active {
+    background: $orange;
+    .q-icon {
+      color: $grey;
+    }
+    .q-icon-fill {
+      stroke: $orange;
+      color: $grey;
+    }
+  }
+}
+
+.my-select {
+  .q-field__control {
+    min-height: 32px;
+    height: auto;
+    .q-field__native,
+    .q-field__append {
+      min-height: 32px;
+      height: auto;
+    }
+    .q-field__append {
+      .q-icon {
+        font-size: 12px;
+      }
+    }
+  }
+}
