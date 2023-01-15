@@ -57,17 +57,10 @@
         name="svguse:icons/allIcons.svg#pouring"
       />
       <q-menu
-        anchor="top right"
-        self="top left"
+        anchor="center right" self="center start"
+        class="q-menu-my q-menu-right"
       >
-        <q-list style="min-width: 100px">
-          <q-item clickable v-close-popup>
-            <q-item-section>anchor="top right"</q-item-section>
-          </q-item>
-          <q-item clickable v-close-popup>
-            <q-item-section>self="top left"</q-item-section>
-          </q-item>
-        </q-list>
+        
       </q-menu>
     </q-btn>
 
@@ -77,17 +70,23 @@
         name="svguse:icons/allIcons.svg#settings"
       />
       <q-menu
-        anchor="top right"
-        self="top left"
+        anchor="center right" self="center start"
+        class="q-menu-my q-menu-right q-menu-settings"
       >
-        <q-list style="min-width: 100px">
-          <q-item clickable v-close-popup>
-            <q-item-section>anchor="top right"</q-item-section>
-          </q-item>
-          <q-item clickable v-close-popup>
-            <q-item-section>self="top left"</q-item-section>
-          </q-item>
-        </q-list>
+        <div class="q-menu-container">
+          <div class="field-group">
+            <div class="title">Длина, м</div>
+            <q-input v-model="text" class="my-input" /> 
+          </div>
+          <div class="field-group">
+            <div class="title">Ширина, м</div>
+            <q-input v-model="text" class="my-input" /> 
+          </div>
+          <div class="field-group">
+            <div class="title">Высота, м</div>
+            <q-input v-model="text" class="my-input" /> 
+          </div>
+        </div>
       </q-menu>
     </q-btn>
 
@@ -112,6 +111,8 @@ export default defineComponent({
   },
   setup() {
     
+    
+
     return {
       
     }

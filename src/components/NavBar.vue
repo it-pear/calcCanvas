@@ -127,57 +127,18 @@
           size="24px"
           name="svguse:icons/allIcons.svg#save"
         />
-        <q-menu
-          anchor="top right"
-          self="top left"
-        >
-          <q-list style="min-width: 100px">
-            <q-item clickable v-close-popup>
-              <q-item-section>anchor="top right"</q-item-section>
-            </q-item>
-            <q-item clickable v-close-popup>
-              <q-item-section>self="top left"</q-item-section>
-            </q-item>
-          </q-list>
-        </q-menu>
       </q-btn>
       <q-btn class="q-btn-nav">
         <q-icon
           size="24px"
           name="svguse:icons/allIcons.svg#printer"
         />
-        <q-menu
-          anchor="top right"
-          self="top left"
-        >
-          <q-list style="min-width: 100px">
-            <q-item clickable v-close-popup>
-              <q-item-section>anchor="top right"</q-item-section>
-            </q-item>
-            <q-item clickable v-close-popup>
-              <q-item-section>self="top left"</q-item-section>
-            </q-item>
-          </q-list>
-        </q-menu>
       </q-btn>
       <q-btn class="q-btn-nav">
         <q-icon
           size="23px"
           name="svguse:icons/allIcons.svg#del"
         />
-        <q-menu
-          anchor="top right"
-          self="top left"
-        >
-          <q-list style="min-width: 100px">
-            <q-item clickable v-close-popup>
-              <q-item-section>anchor="top right"</q-item-section>
-            </q-item>
-            <q-item clickable v-close-popup>
-              <q-item-section>self="top left"</q-item-section>
-            </q-item>
-          </q-list>
-        </q-menu>
       </q-btn>
     </div>
   </div>

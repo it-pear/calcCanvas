@@ -9,12 +9,15 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "vuex": "^4.0.1",
+    "@quasar/cli": "^1.4.0",
     "@quasar/extras": "^1.0.0",
     "core-js": "^3.6.5",
     "quasar": "^2.6.0",
+    "to": "^0.2.9",
+    "update": "^0.7.4",
     "vue": "^3.0.0",
-    "vue-router": "^4.0.0"
+    "vue-router": "^4.0.0",
+    "vuex": "^4.0.1"
   },
   "devDependencies": {
     "@quasar/app-webpack": "^3.0.0"

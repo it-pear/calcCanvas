@@ -1,0 +1,47 @@
+.q-menu-my {
+  background: #4F4F4F;
+  border-radius: 2px;
+  overflow: visible;
+  box-shadow: none;
+  .q-menu-container {
+    padding: 10px;
+  }
+}
+.q-menu-right {
+  transform: translateX(10px);
+  &:before {
+    content: '';
+    width: 14px;
+    height: 28px;
+    display: block;
+    position: absolute;
+    background: white;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    left: -10px;
+    background: url(/icons/arrow-menu.svg);
+  }
+}
+.q-menu-settings {
+  width: 180px;
+  .q-menu-container {
+    padding-top: 4px;
+    padding-right: 0;
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .field-group {
+    margin-top: 6px;
+    flex: 0 0 calc(50% - 10px);
+    max-width: calc(50% - 10px);
+    margin-right: 10px;
+    .title {
+      font-weight: 500;
+      font-size: 15px;
+      line-height: 140%;
+      color: #EFEFEF;
+      margin-bottom: 4px;
+    }
+  }
+}
