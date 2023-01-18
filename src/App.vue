@@ -9,3 +9,10 @@ export default defineComponent({
   name: 'App'
 })
 </script>
+
+<style>
+  @import '/public/fonts/lato';
+  body {
+  font-family: 'Lato', sans-serif !important;
+} 
+</style>

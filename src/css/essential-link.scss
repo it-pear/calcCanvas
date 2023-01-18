@@ -1,11 +1,22 @@
 .essential-link {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
   padding: 12px 0;
+  display: flex;
+  justify-content: center;
   
   .btn-settings {
-    margin-top: 40px;
+    margin-top: 40px !important;
   }
   
+}
+
+.q-tabs-mine {
+  .q-tabs__content {
+    width: 100%;
+    align-items: center;
+    flex-direction: column;
+    .q-tab {
+      margin: auto;
+      min-height: auto;
+    }
+  }
 }

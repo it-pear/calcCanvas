@@ -7,17 +7,40 @@
           name="svguse:icons/allIcons.svg#formwork"
         />
         <q-menu
-          anchor="top right"
-          self="top left"
+          anchor="bottom middle" self="top middle"
+          class="q-menu-my q-menu-bottom q-menu-formwork"
         >
-          <q-list style="min-width: 100px">
-            <q-item clickable v-close-popup>
-              <q-item-section>anchor="top right"</q-item-section>
-            </q-item>
-            <q-item clickable v-close-popup>
-              <q-item-section>self="top left"</q-item-section>
-            </q-item>
-          </q-list>
+          <div class="q-menu-container">
+            <div class="field-group">
+              <q-checkbox
+                left-label
+                v-model="left"
+                label="Опалубка"
+                color="rgba(0,0,0,0)"
+                class="my-checkbox text-grey-11"
+              />
+            </div>
+            <div class="field-group">
+              <div class="title">Сетка</div>
+              <q-select 
+                outlined 
+                v-model="model" 
+                :options="options"
+                class="my-select" 
+                dropdown-icon="svguse:icons/allIcons.svg#arrow"
+              />
+            </div>
+            <div class="field-group">
+              <div class="title">Толщина доски</div>
+              <q-select 
+                outlined 
+                v-model="model2" 
+                :options="options2"
+                class="my-select" 
+                dropdown-icon="svguse:icons/allIcons.svg#arrow"
+              />
+            </div>
+          </div>
         </q-menu>
       </q-btn>
       <q-btn class="q-btn-nav">
@@ -154,9 +177,54 @@ export default defineComponent({
     
   },
   setup() {
+    const left = ref(true)
+    const model = ref(
+      {
+        label: '200х200',
+        value: '200х200'
+      }
+    )
+    const options = ref([
+      {
+        label: '100х100',
+        value: '100х100'
+      },
+      {
+        label: '200х200',
+        value: '200х200'
+      },
+      {
+        label: '300х300',
+        value: '300х300'
+      },
+    ])
+    const model2 = ref(
+      {
+        label: '30 мм',
+        value: '30'
+      },
+    )
+    const options2 = ref([
+      {
+        label: '10 мм',
+        value: '10'
+      },
+      {
+        label: '20 мм',
+        value: '20'
+      },
+      {
+        label: '30 мм',
+        value: '30'
+      },
+    ])
     
     return {
-      
+      model,
+      options,
+      model2,
+      options2,
+      left,
     }
   }
 })

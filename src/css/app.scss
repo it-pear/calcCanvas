@@ -1,11 +1,8 @@
 // app global css in SCSS form
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&display=swap');
-body {
-  font-family: 'Lato', sans-serif !important;
-}
+
 @import 'quasar.variables';
 @import 'footer';
-@import 'q-btn';
+@import 'q-fields';
 @import 'layout';
 @import 'essential-link';
 @import 'nav-bar';

@@ -30,9 +30,11 @@
 }
 
 .my-select {
+  
   .q-field__control {
     min-height: 32px;
     height: auto;
+    background: white;
     .q-field__native,
     .q-field__append {
       min-height: 32px;
@@ -53,8 +55,13 @@
     background: #FFFFFF;
     border-radius: 2px;
     height: auto;
+    
     &:before {
       border: none;
+      border: 1px solid #DADADA;
+    }
+    &:focus::before {
+      border: 1px solid #DADADA;
     }
     &:after {
       display: none;
@@ -64,5 +71,36 @@
       padding-left: 12px;
     }
   }
-  
+}
+
+.my-checkbox {
+  .q-checkbox__inner--truthy .q-checkbox__bg,
+  .q-checkbox__inner--indet .q-checkbox__bg {
+    background: rgba(0,0,0,0);
+    border-color: white;
+    border-radius: 2px;
+    .q-checkbox__svg {
+      padding: 2px;
+    }
+  }
+  .q-checkbox__bg {
+    top: 28%;
+    left: 27%;
+    width: 45%;
+    height: 45%;
+  }
+  &[aria-checked="false"] {
+    .q-checkbox__bg {
+      border-color: white;
+    }
+  }
+  .q-checkbox__inner {
+    // font-size: auto;
+    // width: auto;
+    // min-width: auto;
+    // height: auto;
+    &:before {
+      display: none;
+    }
+  }
 }
