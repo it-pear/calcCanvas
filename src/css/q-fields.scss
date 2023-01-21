@@ -6,7 +6,7 @@
   padding: 0;
   width: 40px;
   height: 40px;
-  
+  border-radius: 2px;
   &:before {
     box-shadow: none;
   }
@@ -17,15 +17,18 @@
     stroke: white;
     color: $dark;
   }
-  &.active {
+  &[aria-selected="true"] {
     background: $orange;
     .q-icon {
       color: $grey;
     }
     .q-icon-fill {
-      stroke: $orange;
-      color: $grey;
+      stroke: white;
+      color: #3B3B3B;
     }
+  }
+  .q-tab__indicator {
+    display: none;
   }
 }
 

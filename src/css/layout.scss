@@ -13,6 +13,9 @@
   right: 17px;
   top: 14px;
   height: max-content;
+  .header {
+    width: 100%;
+  }
   .q-drawer__content {
     overflow: visible;
     display: flex;
@@ -22,10 +25,102 @@
   .btn-back {
     padding: 12.5px 0;
     width: 100%;
+    &:before {
+      border: 2px solid #AFAFAF;
+    }
     .block {
       font-weight: 400;
       font-size: 11px;
       line-height: 13px;
+    }
+  }
+}
+
+@media (max-width: 772px) {
+  .q-drawer--right {
+    width: 100% !important;
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: max-content;
+    .header {
+      padding: 14px 10px;
+      display: flex;
+      .btn-back {
+        padding: 10px 0 10px 0;
+        width: 144px;
+        min-height: 35px;
+        .block {
+          font-size: 10px;
+          line-height: 12px;
+        }
+      }
+      .btn-message,
+      .btn-play {
+        min-width: 35px;
+        min-height: 35px;
+        padding: 0;
+        border-radius: 100%;
+        
+        &:before {
+          box-shadow: none;
+        }
+      }
+      .btn-message {
+        padding-left: 0;
+        margin-left: auto;
+        padding-top: 1.5px;
+      }
+      .btn-play {
+        margin-left: 10px;
+        border: 2px solid #AFAFAF;
+        padding-left: 3px;
+      }
+    }
+    .q-drawer__content {
+      overflow: visible;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      .nav-bar {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        .section-btn {
+          width: 50%;
+          min-width: 50%;
+          flex: 0 0 50%;
+          border-radius: 0;
+          order: 0;
+          &:nth-child(1),
+          &:nth-child(2) {
+            margin-bottom: 14px;
+          }
+        }
+        .section-btn-func {
+          order: 1;
+          margin-top: 0;
+          min-width: auto;
+          height: auto;
+          background: rgba(0,0,0,0);
+          padding: 0;
+          justify-content: flex-end;
+          margin-left: auto;
+          width: max-content;
+          flex: 1 1 max-content;
+          .q-btn {
+            margin: 0 3.5px;
+            .q-icon {
+              color: #2B2B2B;
+            }
+          }
+        }
+        .my-select {
+          margin-left: 10px;
+        }
+      }
+      
     }
   }
 }

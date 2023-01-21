@@ -3,58 +3,58 @@
     v-model="tab"
     class="essential-link q-tabs-mine"
   >
-    <q-tab name="" class="q-btn-nav active">
+    <q-tab name="cursor" class="q-btn-nav">
       <q-icon
         size="18px"
         name="svguse:icons/allIcons.svg#cursor"
       />
     </q-tab>
-    <q-tab name="" class="q-btn-nav">
+    <q-tab name="line" class="q-btn-nav">
       <q-icon
         size="20px"
         name="svguse:icons/allIcons.svg#line"
       />
     </q-tab>
-    <q-tab name="" class="q-btn-nav">
+    <q-tab name="circleline" class="q-btn-nav">
       <q-icon
         size="18px"
         class="q-icon-fill"
         name="svguse:icons/allIcons.svg#circleline"
       />
     </q-tab>
-    <q-tab name="" class="q-btn-nav">
+    <q-tab name="pencil" class="q-btn-nav">
       <q-icon
         size="21px"
         name="svguse:icons/allIcons.svg#pencil"
       />
     </q-tab>
-    <q-tab name="" class="q-btn-nav">
+    <q-tab name="rectangle" class="q-btn-nav">
       <q-icon
         size="23px"
         class="q-icon-fill"
         name="svguse:icons/allIcons.svg#rectangle"
       />
     </q-tab>
-    <q-tab name="" class="q-btn-nav">
+    <q-tab name="circle" class="q-btn-nav">
       <q-icon
         size="20px"
         class="q-icon-fill"
         name="svguse:icons/allIcons.svg#circle"
       />
     </q-tab>
-    <q-tab name="" class="q-btn-nav">
+    <q-tab name="pointer" class="q-btn-nav">
       <q-icon
         size="24px"
         name="svguse:icons/allIcons.svg#pointer"
       />
     </q-tab>
-    <q-tab name="" class="q-btn-nav">
+    <q-tab name="back" class="q-btn-nav">
       <q-icon
         size="23px"
         name="svguse:icons/allIcons.svg#back"
       />
     </q-tab>
-    <q-tab name="" class="q-btn-nav">
+    <q-tab name="pouring" class="q-btn-nav">
       <q-icon
         size="24px"
         name="svguse:icons/allIcons.svg#pouring"
@@ -75,7 +75,7 @@
       </q-menu>
     </q-tab>
 
-    <q-tab name="" class="q-btn-nav btn-settings">
+    <q-tab name="settings" class="q-btn-nav btn-settings">
       <q-icon
         size="23px"
         name="svguse:icons/allIcons.svg#settings"
@@ -101,18 +101,18 @@
       </q-menu>
     </q-tab>
 
-    <q-tab name="" class="q-btn-nav">
+    <q-btn class="q-btn-nav">
       <q-icon
         size="20px"
         name="svguse:icons/allIcons.svg#close"
       />
-    </q-tab>
+    </q-btn>
   </q-tabs>
   
 </template>
 
 <script>
-import { ref, defineComponent } from 'vue'
+import { ref, defineComponent, onMounted } from 'vue'
 // import comp from 'components/comp'
 
 export default defineComponent({
@@ -121,7 +121,7 @@ export default defineComponent({
     
   },
   setup() {
-    
+    const tab = ref()
     const activeBtn = ref('')
     const colors = ref([
       '#FFFFFF',
@@ -180,9 +180,32 @@ export default defineComponent({
       '#83B925',
     ])
 
+    function clickOut() {
+      document.onclick = function (e) {
+        const arr = e.composedPath()
+        let bool = false
+        arr.forEach((el) => {
+          if (el.classList) {
+            if(el.classList.contains('q-btn-nav')) {
+              bool = true
+            }
+          }
+        })
+        if (!bool) {
+          tab.value = ''
+        }
+      }
+    }
+
+    onMounted(() => {
+      clickOut()
+    })
+
     return {
       colors,
-      activeBtn
+      activeBtn,
+      tab,
+      clickOut
     }
   }
 })

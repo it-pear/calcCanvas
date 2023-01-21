@@ -1,30 +1,54 @@
 <template>
   <q-layout view="hHh lpR fFf">
 
-    <q-drawer show-if-above v-model="leftDrawerOpen" side="left">
+    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" :breakpoint="772">
       <EssentialLink />
     </q-drawer>
 
-    <q-drawer show-if-above v-model="rightDrawerOpen" side="right">
-      <q-btn 
-        outline style="color: grey;" 
-        label="Назад в калькулятор" 
-        class="btn-back"
-      />
+    
+
+    <q-page-container>
+      <router-view />
+    </q-page-container>
+
+    <q-drawer show-if-above v-model="rightDrawerOpen" side="right" :breakpoint="0">
+      <div class="header">
+        <q-btn 
+          outline style="color: grey;" 
+          label="Назад в калькулятор" 
+          class="btn-back"
+        />
+        <q-btn 
+          class="bg-orange btn-message mb-visible"
+        >
+          <q-icon
+            color="grey"
+            size="16px"
+            name="svguse:icons/allIcons.svg#message"
+          />
+        </q-btn>
+        <q-btn 
+          outline style="color: white;"
+          class="btn-play mb-visible" 
+        >
+          <q-icon
+            color="grey"
+            size="14px"
+            name="svguse:icons/allIcons.svg#play"
+          />
+        </q-btn>
+      </div>
       <NavBar />
+      <div class="content mb-visible"></div>
       <MiniDashboard />
       <q-select 
         outlined 
         v-model="model" 
         :options="options"
-        class="my-select" 
+        class="my-select lg-visible" 
         dropdown-icon="svguse:icons/allIcons.svg#arrow"
       />
     </q-drawer>
-
-    <q-page-container>
-      <router-view />
-    </q-page-container>
 
     <q-footer class="bg-dark text-white my-footer">
       <q-toolbar>

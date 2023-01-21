@@ -1,6 +1,7 @@
 <template>
   <div class="nav-bar">
     <div class="section-btn">
+      
       <q-btn class="q-btn-nav">
         <q-icon
           size="24px"
@@ -164,6 +165,13 @@
         />
       </q-btn>
     </div>
+    <q-select 
+      outlined 
+      v-model="modelSelect" 
+      :options="optionsSelect"
+      class="my-select mb-visible" 
+      dropdown-icon="svguse:icons/allIcons.svg#arrow"
+    />
   </div>
 
 </template>
@@ -218,6 +226,27 @@ export default defineComponent({
         value: '30'
       },
     ])
+
+    const modelSelect = ref(
+      {
+        label: 'Миллиметры',
+        value: 'mm'
+      }
+    )
+    const optionsSelect = ref([
+      {
+        label: 'Миллиметры',
+        value: 'mm'
+      },
+      {
+        label: 'Сантиметры',
+        value: 'cm'
+      },
+      {
+        label: 'Метры',
+        value: 'm'
+      },
+    ])
     
     return {
       model,
@@ -225,6 +254,8 @@ export default defineComponent({
       model2,
       options2,
       left,
+      modelSelect,
+      optionsSelect,
     }
   }
 })

@@ -8,3 +8,19 @@
 @import 'nav-bar';
 @import 'mini-dashboard';
 @import 'q-menu';
+
+
+.lg-visible {
+  @media (max-width: 772px) {
+    display: none;
+  }
+}
+.mb-visible {
+  @media (min-width: 772px) {
+    display: none;
+  }
+}
+
+.content {
+  height: 305px;
+}

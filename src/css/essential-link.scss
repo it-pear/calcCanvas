@@ -6,6 +6,15 @@
   .btn-settings {
     margin-top: 40px !important;
   }
+  .q-tab {
+    &:nth-child(3) {
+      &[aria-selected="true"] {
+        .q-icon-fill {
+          color: $orange !important;
+        }
+      }
+    }
+  }
   
 }
 
