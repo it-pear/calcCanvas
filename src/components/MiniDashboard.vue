@@ -34,6 +34,12 @@
       <q-icon
         size="23px"
         name="svguse:icons/allIcons.svg#cirl"
+        v-show="tab !== 'cirl'"
+      />
+      <q-icon
+        size="17px"
+        name="svguse:icons/allIcons.svg#close"
+        v-show="tab === 'cirl'"
       />
       <q-menu
         anchor="top middle" self="bottom middle"
@@ -117,7 +123,53 @@
   </q-tabs>
 
   <div class="pdd-mob">
-    <div class="mini-dashboard">
+    <q-btn 
+      outline style="color: grey;" 
+      label="Информация" 
+      class="btn-back mb-visible"
+    >
+      <q-menu
+        anchor="top middle" self="bottom middle"
+        class="q-menu-my q-menu-nav"
+      >
+        <div class="mini-dashboard mb-visible">
+          <div class="item">
+            <div class="title">Количество фигур:</div>
+            <ul>
+              <li>Элемент 1</li>
+              <li>Элемент 1</li>
+              <li>Элемент 1</li>
+              <li>Элемент 1</li>
+              <li>Элемент 1</li>
+              <li>Элемент 1</li>
+            </ul>
+          </div>
+          <div class="item">
+            <div class="title">Площади фигур:</div>
+            <ul>
+              <li>S1=80 м2</li>
+              <li>S1=80 м2</li>
+              <li>S1=80 м2</li>
+              <li>S1=80 м2</li>
+              <li>S1=80 м2</li>
+              <li>S1=80 м2</li>
+            </ul>
+          </div>
+          <div class="item">
+            <div class="title">Объемы фигур:</div>
+            <ul>
+              <li>V1=80 м3</li>
+              <li>V1=80 м3</li>
+              <li>V1=80 м3</li>
+              <li>V1=80 м3</li>
+              <li>V1=80 м3</li>
+              <li>V1=80 м3</li>
+            </ul>
+          </div>
+        </div>
+      </q-menu>
+    </q-btn>
+    <div class="mini-dashboard lg-visible">
       <div class="item">
         <div class="title">Количество фигур:</div>
         <ul>

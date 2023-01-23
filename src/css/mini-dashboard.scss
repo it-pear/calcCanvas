@@ -38,6 +38,11 @@
   .pdd-mob {
     padding: 10px;
     width: 100%;
+    & > .q-btn {
+      position: fixed;
+      bottom: 15px;
+      width: calc(100% - 20px);
+    }
   }
   .mini-dashboard {
     flex-wrap: wrap;
@@ -45,6 +50,7 @@
     margin-top: 8px;
     width: 100%;
     padding-bottom: 11px;
+    
     .item {
       margin: 11px;
       margin-bottom: 4px;
@@ -65,7 +71,10 @@
   .mob-navigation {
     flex: 0 0 100%;
     width: 100%;
-    padding: 15px 10px;
+    padding: 0 10px;
+    height: 40px;
+    position: fixed;
+    bottom: 80px;
     .q-tabs__content {
       justify-content: space-between;
       flex-direction: row;
