@@ -107,3 +107,41 @@
     }
   }
 }
+
+.q-tooltip {
+  z-index: 1000;
+  overflow: visible;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 18px;
+  border-radius: 2px;
+
+  &:after {
+    content: '';
+    width: 8px;
+    height: 16px;
+    background: url(/icons/arrow-tooltip.svg);
+    position: absolute;
+    display: block;
+    background-size: contain;
+    z-index: 1000;
+  }
+  &.tooltip-right {
+    &:after {
+      left: -7px;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+    }
+  }
+  &.tooltip-bottom {
+    transform: translateY(-4px);
+    &:after {
+      left: 0;
+      right: 0;
+      top: -9px;
+      margin: auto;
+      transform: rotate(90deg);
+    }
+  }
+}

@@ -23,6 +23,13 @@
       />
     </q-tab>
     <q-tab name="pencil" class="q-btn-nav">
+      <q-tooltip
+        anchor="center end"
+        self="center start"
+        class="tooltip-right bg-orange text-grey"
+      >
+        Произвольная линия
+      </q-tooltip>
       <q-icon
         size="21px"
         name="svguse:icons/allIcons.svg#pencil"
@@ -55,6 +62,13 @@
       />
     </q-tab>
     <q-tab name="pouring" class="q-btn-nav">
+      <q-tooltip
+        anchor="center end"
+        self="center start"
+        class="tooltip-right bg-orange text-grey"
+      >
+        Заливка
+      </q-tooltip>
       <q-icon
         size="24px"
         name="svguse:icons/allIcons.svg#pouring"

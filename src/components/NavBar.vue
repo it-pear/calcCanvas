@@ -7,6 +7,13 @@
           size="24px"
           name="svguse:icons/allIcons.svg#formwork"
         />
+        <q-tooltip
+          anchor="bottom middle"
+          self="top middle"
+          class="tooltip-bottom bg-orange text-grey"
+        >
+          Опалубка
+        </q-tooltip>
         <q-menu
           anchor="bottom middle" self="top middle"
           class="q-menu-my q-menu-bottom q-menu-formwork"
