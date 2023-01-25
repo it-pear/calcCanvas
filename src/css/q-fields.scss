@@ -134,11 +134,30 @@
       margin: auto;
     }
   }
+  &.tooltip-left {
+    &:after {
+      right: -7px;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      transform: rotate(180deg);
+    }
+  }
   &.tooltip-bottom {
     transform: translateY(-4px);
     &:after {
       left: 0;
       right: 0;
+      top: -9px;
+      margin: auto;
+      transform: rotate(90deg);
+    }
+  }
+  &.tooltip-bottom-right {
+    transform: translateY(-4px);
+    transform: translateX(-4px);
+    &:after {
+      right: 27.5px;
       top: -9px;
       margin: auto;
       transform: rotate(90deg);
