@@ -17,7 +17,15 @@
           outline style="color: grey;" 
           label="Назад в калькулятор" 
           class="btn-back"
-        />
+        >
+          <q-tooltip
+            anchor="center left"
+            self="center end"
+            class="tooltip-left bg-orange text-grey"
+          >
+            Вернуться в стандартный калькулятор
+          </q-tooltip>
+        </q-btn>
         <q-btn 
           class="bg-orange btn-message mb-visible"
         >
@@ -45,9 +53,19 @@
         outlined 
         v-model="model" 
         :options="options"
+        color="orange"
+        label-color="orange"
         class="my-select lg-visible" 
         dropdown-icon="svguse:icons/allIcons.svg#arrow"
-      />
+      >
+        <q-tooltip
+          anchor="center left"
+          self="center end"
+          class="tooltip-left bg-orange text-grey"
+        >
+          Вернуться в стандартный калькулятор
+        </q-tooltip>
+      </q-select>
     </q-drawer>
 
     <q-footer class="bg-dark text-white my-footer">

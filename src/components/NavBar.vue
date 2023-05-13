@@ -7,6 +7,13 @@
           size="24px"
           name="svguse:icons/allIcons.svg#formwork"
         />
+        <q-tooltip
+          anchor="bottom middle"
+          self="top middle"
+          class="tooltip-bottom bg-orange text-grey"
+        >
+          Опалубка
+        </q-tooltip>
         <q-menu
           anchor="bottom middle" self="top middle"
           class="q-menu-my q-menu-bottom q-menu-formwork"
@@ -49,6 +56,13 @@
           size="24px"
           name="svguse:icons/allIcons.svg#net"
         />
+        <q-tooltip
+          anchor="bottom middle"
+          self="top middle"
+          class="tooltip-bottom bg-orange text-grey"
+        >
+          Армирование
+        </q-tooltip>
         <q-menu
           anchor="top right"
           self="top left"
@@ -68,6 +82,13 @@
           size="23px"
           name="svguse:icons/allIcons.svg#triangle"
         />
+        <q-tooltip
+          anchor="bottom end"
+          self="top end"
+          class="tooltip-bottom-right bg-orange text-grey"
+        >
+          Боковые упоры <br>для опалубки
+        </q-tooltip>
         <q-menu
           anchor="top right"
           self="top left"
@@ -90,6 +111,13 @@
           size="24px"
           name="svguse:icons/allIcons.svg#triangle2"
         />
+        <q-tooltip
+          anchor="bottom middle"
+          self="top middle"
+          class="tooltip-bottom bg-orange text-grey"
+        >
+          Включить <br>ортоганаль
+        </q-tooltip>
         <q-menu
           anchor="top right"
           self="top left"
@@ -109,6 +137,13 @@
           size="24px"
           name="svguse:icons/allIcons.svg#square"
         />
+        <q-tooltip
+          anchor="bottom middle"
+          self="top middle"
+          class="tooltip-bottom bg-orange text-grey"
+        >
+          Включить <br>привязку
+        </q-tooltip>
         <q-menu
           anchor="top right"
           self="top left"
@@ -129,6 +164,13 @@
           name="svguse:icons/allIcons.svg#markup"
           class="q-icon-fill"
         />
+        <q-tooltip
+          anchor="bottom end"
+          self="top end"
+          class="tooltip-bottom-right bg-orange text-grey"
+        >
+          Увеличить размер
+        </q-tooltip>
         <q-menu
           anchor="top right"
           self="top left"
@@ -151,20 +193,42 @@
           size="24px"
           name="svguse:icons/allIcons.svg#save"
         />
+        <q-tooltip
+          anchor="bottom middle"
+          self="top middle"
+          class="tooltip-bottom bg-orange text-grey"
+        >
+          Сохранить PDF
+        </q-tooltip>
       </q-btn>
       <q-btn class="q-btn-nav">
         <q-icon
           size="24px"
           name="svguse:icons/allIcons.svg#printer"
         />
+        <q-tooltip
+          anchor="bottom middle"
+          self="top middle"
+          class="tooltip-bottom bg-orange text-grey"
+        >
+          Распечатать
+        </q-tooltip>
       </q-btn>
       <q-btn class="q-btn-nav">
         <q-icon
           size="23px"
           name="svguse:icons/allIcons.svg#del"
         />
+        <q-tooltip
+          anchor="bottom end"
+          self="top end"
+          class="tooltip-bottom-right bg-orange text-grey"
+        >
+          Отчистить рабочее <br>поле
+        </q-tooltip>
       </q-btn>
     </div>
+    
     <q-select 
       outlined 
       v-model="modelSelect" 
