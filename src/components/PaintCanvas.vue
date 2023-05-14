@@ -23,7 +23,7 @@
   const keyIsPressed = ref(false)
   const realTimeFigure = ref(null)
   
-  // функция реалтайм
+  // функция реалтайм d
   const handleMouseMove = (event) => {
     currentCursor.value.x = event.clientX
     currentCursor.value.y = event.clientY
