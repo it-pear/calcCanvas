@@ -11,7 +11,7 @@
         self="center start"
         class="tooltip-right bg-orange text-grey"
       >
-        Произвольная линия
+        Выбор объекта
       </q-tooltip>
       <q-icon
         size="18px"
