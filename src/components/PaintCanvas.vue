@@ -1,124 +1,124 @@
 <template>
   <div class="get-paint">
-    {{repository}}
+    <div style="z-index: 3;" class="info">{{repository}}</div>
     <canvas ref="canvas"></canvas>
-  </div>
+  </div> 
 </template>
 
 <script setup>
-  import { onMounted, ref, computed } from 'vue'
-  import { useStore } from 'vuex'
+import { fabric } from 'fabric'
+import { ref, onMounted, computed } from 'vue'
+import { useStore } from 'vuex'
+import shapes from 'src/composable/shapes.js';
 
-  // инициализируем store
-  const store = useStore()
-  const repository = computed(() => store.state.canvas)
+const store = useStore()
+const canvas = ref(null)
+const repository = computed(() => store.state.canvas)
+const canvasRender = ref(null)
+
+// фигурки 
 
 
-  // координаты мыши в разных состояниях
-  const currentCursor = ref({x: null,y: null})
-  const startCoordinates = ref({x: null,y: null})
-  const releaseCoordinates = ref({x: null,y: null})
-  const differenceCoordinates = ref({width: null,height: null})
+const startPoints = ref({ x: 0, y: 0 })
+const activeShape = ref(null)
 
-  const keyIsPressed = ref(false)
-  const realTimeFigure = ref(null)
-  
-  // функция реалтайм d
-  const handleMouseMove = (event) => {
-    currentCursor.value.x = event.clientX
-    currentCursor.value.y = event.clientY
 
-    differenceCoordinates.value.width = currentCursor.value.x - startCoordinates.value.x
-    differenceCoordinates.value.height = currentCursor.value.y - startCoordinates.value.y
 
-    if (keyIsPressed.value && !!repository.value.activeAction) {
-      customShape()
-    }
+// функция клика по мышки в удержанном состоянии
+const handleMouseDown = (options) => {
+  if (canvasRender.value.getActiveObject()) {
+    return
   }
 
-  // функция при нажатии мыши
-  const handleMousePress = (event) => {
-    startCoordinates.value.x = currentCursor.value.x
-    startCoordinates.value.y = currentCursor.value.y
-
-    if (event.repeat) {
+  const { clientX, clientY } = options.e
+  startPoints.value.x = clientX
+  startPoints.value.y = clientY
+  
+  switch (repository.value.activeAction) {
+    case 'rectangle':
+      activeShape.value = new fabric.Rect({
+        left: startPoints.value.x,
+        top: startPoints.value.y,
+        width: 0,
+        height: 0,
+        fill: 'red',
+      })
+      break
+    case 'circle':
+      activeShape.value = new fabric.Circle({
+        left: startPoints.value.x,
+        top: startPoints.value.y,
+        radius: 0,
+        fill: 'blue',
+      })
+      break
+    default:
+      console.error(`Unknown shape type: ${repository.value.activeAction}`)
       return
-    }
-
-    if (!keyIsPressed.value) {
-      keyIsPressed.value = true
-    }
   }
 
-  // функция при отжатии мыши
-  const handleMouseRelease = () => {
-    keyIsPressed.value = false
-    if (!!realTimeFigure.value) store.commit('canvas/addShape', realTimeFigure.value)
-    realTimeFigure.value = null
-    // releaseCoordinates.value.x = currentCursor.value.x
-    // releaseCoordinates.value.y = currentCursor.value.y
+  canvasRender.value.add(activeShape.value)
+}
+
+// функция перемещения маши при создании объекта
+const handleMouseMove = (options) => {
+  if (canvasRender.value.getActiveObject()) {
+    return
   }
 
+  if (!activeShape.value) return
+  const { clientX, clientY } = options.e
+
+  switch (repository.value.activeAction) {
+    case 'rectangle':
+      activeShape.value.set({
+        width: clientX - startPoints.value.x,
+        height: clientY - startPoints.value.y,
+      })
+      break
+    case 'circle':
+      const radius = Math.sqrt(
+        Math.pow(startPoints.value.x - clientX, 2) + Math.pow(startPoints.value.y - clientY, 2)
+      ) / 2
+      activeShape.value.set({ radius, left: startPoints.value.x, top: startPoints.value.y })
+      break
+    default:
+      console.error(`Unknown shape type: ${repository.value.activeAction}`)
+      return
+  }
+  canvasRender.value.renderAll()
+}
+
+// функция отклика мыши при создании нового объекта
+const handleMouseUp = () => {
+  if (activeShape.value) {
+    const shapeJSON = activeShape.value.toJSON()
+    store.commit('canvas/addShape', shapeJSON)
+    activeShape.value = null
+  }
+}
+
+// манипуляции с объектом
+const handleObjectModified = (options) => {
+  const modifiedShape = options.target
+  store.commit('canvas/updateShape', { id: modifiedShape.id, properties: modifiedShape.toJSON() })
+}
+
+// монтирование
+onMounted(() => {
+  canvasRender.value = new fabric.Canvas(canvas.value)
+  canvasRender.value.setWidth(window.innerWidth)
+  canvasRender.value.setHeight(window.innerHeight - 58)
   
+  canvasRender.value.on('mouse:down', handleMouseDown)
+  canvasRender.value.on('mouse:move', handleMouseMove)
+  canvasRender.value.on('mouse:up', handleMouseUp)
 
-  // функция перерисовки холста
-  const drawShapes = () => {
-    const ctx = canvas.value.getContext('2d')
-    ctx.clearRect(0, 0, canvas.value.width, canvas.value.height)
+  canvasRender.value.on('object:modified', handleObjectModified)
 
-    repository.value.shapes.forEach((shape) => {
-      ctx.fillStyle = shape.color
-      ctx.fillRect(shape.x, shape.y, shape.width, shape.height)
-    })
-  }
-
-  // функция перерисовки одной реалтайм фигуры
-  const drawShape = (figure) => {
-    const ctx = canvas.value.getContext('2d')
-    // ctx.clearRect(0, 0, canvas.value.width, canvas.value.height)
-
-    realTimeFigure.value = figure
-    
-    ctx.fillStyle = figure.color
-    ctx.fillRect(figure.x, figure.y, figure.width, figure.height)
-  }
-
-
-
-
-  // функция обработки фигуры
-  const customShape = async () => {    
-    const resp = await store.dispatch('canvas/initShape', [startCoordinates.value, differenceCoordinates.value])
-    drawShape(resp)
-    
-    // drawShapes()
-  }
-
-
-
-
-  // инициализация основного холста
-  const canvas = ref(null)
-  const setupCanvas = () => {
-    const ctx = canvas.value.getContext('2d')
-
-    canvas.value.width = window.innerWidth
-    canvas.value.height = window.innerHeight - 58
-
-    ctx.fillStyle = 'white'
-    ctx.fillRect(0, 0, canvas.value.width, canvas.value.height)
-
-    drawShapes()
-  }
-
-  // монтирование функций
-  onMounted(() => {
-    setupCanvas()
-    canvas.value.addEventListener('mousemove', handleMouseMove)
-    canvas.value.addEventListener('mousedown', handleMousePress)
-    canvas.value.addEventListener('mouseup', handleMouseRelease)
-    // canvas.value.addEventListener('click', customShape)
+  // Включить обратно возможность выбора и изменения объектов
+  canvasRender.value.forEachObject((obj) => {
+    obj.set({ selectable: true })
   })
-
-
+})
 </script>

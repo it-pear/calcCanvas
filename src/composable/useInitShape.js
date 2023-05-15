@@ -1,17 +1,15 @@
 
-export default async function useInitShape(shape, coordinates, size) {
+export default async function useInitShape(shape, coordinates) {
   if (!!shape === false) {
     return false
   }
 
-  const newRectangle = {
+  const newShape = {
     type: shape,
     x: coordinates.x,
     y: coordinates.y,
     color: 'black',
-    width: size.width,
-    height: size.height,
   }
 
-  return newRectangle
+  return newShape
 }

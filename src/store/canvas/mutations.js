@@ -7,9 +7,17 @@ export default {
 
   // Добавление новой фигуры в массив
   addShape(state, shape) {
-    console.log(shape)
+    shape.id = state.nextId++
     state.shapes.push(shape) 
   },
 
-  
+  updateShape(state, updatedShape) {
+    const shapeIndex = state.shapes.findIndex(shape => shape.id === updatedShape.id)
+    if (shapeIndex !== -1) {
+      state.shapes[shapeIndex] = updatedShape
+    } else {
+      console.error(`Shape with id ${updatedShape.id} not found in state.shapes`)
+    }
+  },
+
 }
