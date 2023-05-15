@@ -103,6 +103,21 @@ const handleObjectModified = (options) => {
   store.commit('canvas/updateShape', updatedShape)
 }
 
+
+// удаление объекта
+const deleteObject = () => {
+  const activeObject = canvasRender.value.getActiveObject()
+  if (activeObject) {
+    canvasRender.value.remove(activeObject)
+    store.commit('canvas/removeShape', activeObject.id) // Удалить объект из хранилища Vuex
+  }
+}
+const handleKeyDown = (event) => {
+  if (event.key === 'Delete') {
+    deleteObject()
+  }
+};
+
 // монтирование
 onMounted(() => {
   canvasRender.value = new fabric.Canvas(canvas.value)
@@ -114,6 +129,7 @@ onMounted(() => {
   canvasRender.value.on('mouse:up', handleMouseUp)
 
   canvasRender.value.on('object:modified', handleObjectModified)
+  window.addEventListener('keydown', handleKeyDown);
 
   // Включить обратно возможность выбора и изменения объектов
   canvasRender.value.forEachObject((obj) => {

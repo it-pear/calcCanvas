@@ -26,4 +26,11 @@ export default {
     }
   },
 
+  removeShape(state, shapeId) {
+    const shapeIndex = state.shapes.findIndex(shape => shape.id === shapeId);
+    if (shapeIndex !== -1) {
+      state.shapes.splice(shapeIndex, 1);
+    }
+  },
+
 }
