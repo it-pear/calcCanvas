@@ -17,7 +17,6 @@ export default {
   },
 
   updateShape(state, updatedShape) {
-    console.log(updatedShape)
     const shapeIndex = state.shapes.findIndex(shape => shape.id === updatedShape.id)
     if (shapeIndex !== -1) {
       state.shapes[shapeIndex] = updatedShape
