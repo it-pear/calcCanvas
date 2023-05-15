@@ -16,12 +16,9 @@ const canvas = ref(null)
 const repository = computed(() => store.state.canvas)
 const canvasRender = ref(null)
 
-// фигурки 
-
 
 const startPoints = ref({ x: 0, y: 0 })
 const activeShape = ref(null)
-
 
 
 // функция клика по мышки в удержанном состоянии
@@ -92,6 +89,8 @@ const handleMouseMove = (options) => {
 // функция отклика мыши при создании нового объекта
 const handleMouseUp = () => {
   if (activeShape.value) {
+    const id = store.getters['canvas/nextId']
+    activeShape.value.set('id', id)
     const shapeJSON = activeShape.value.toJSON()
     store.commit('canvas/addShape', shapeJSON)
     activeShape.value = null
@@ -100,8 +99,8 @@ const handleMouseUp = () => {
 
 // манипуляции с объектом
 const handleObjectModified = (options) => {
-  const modifiedShape = options.target
-  store.commit('canvas/updateShape', { id: modifiedShape.id, properties: modifiedShape.toJSON() })
+  const updatedShape = options.target.toJSON(['id'])
+  store.commit('canvas/updateShape', updatedShape)
 }
 
 // монтирование

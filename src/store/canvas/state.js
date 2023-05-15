@@ -2,6 +2,6 @@ export default function () {
   return {
     activeAction: null,
     shapes: [],
-    nextId: 1,
+    nextId: 0,
   }
 }
