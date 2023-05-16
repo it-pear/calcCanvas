@@ -9,7 +9,7 @@
 <script setup>
   import { fabric } from 'fabric'
 
-  import { ref, onMounted, computed } from 'vue'
+  import { ref, onMounted, computed, watchEffect } from 'vue'
   import { useStore } from 'vuex'
   import { createRectangle, createCircle, createArc } from 'src/composable/shapes.js'
   import { updateRectangle, updateCircle, updateArc } from 'src/composable/shapesModified.js'
@@ -29,9 +29,10 @@
 
   // функция клика по мышки в удержанном состоянии
   const handleMouseDown = (options) => {
-    if (canvasRender.value.getActiveObject()) {
-      return
-    }
+    // if (canvasRender.value.getActiveObject()) {
+    //   return
+    // }
+    
 
     const { clientX, clientY } = options.e
     startPoints.value.x = clientX
@@ -81,12 +82,12 @@
       canvasRender.value.add(activeShape.value)
     }
   }
-
+ 
   // функция перемещения мыши при создании объекта
   const handleMouseMove = (options) => {
-    if (canvasRender.value.getActiveObject()) {
-      return
-    }
+    // if (canvasRender.value.getActiveObject()) {
+    //   return
+    // }
 
     const { clientX, clientY } = options.e
 
@@ -133,6 +134,7 @@
 
   // функция перерисовки холста 
   const redrawCanvas = () => {
+
     canvasRender.value.clear() 
 
     const shapes = store.state.canvas.shapes 
@@ -142,19 +144,52 @@
         shape.set({
           hasBorders: true,
           hasControls: true,
+          uniScaleTransform: false
         })
+        
+
+        shape.setControlsVisibility(true)
+
         canvasRender.value.add(shape)
       })
     })
+
+    
   }
 
 
   // манипуляции с объектом
   const handleObjectModified = (options) => {
-    const updatedShape = options.target.toJSON(['id'])
+    const updatedShape = options.target.toJSON(['id', 'hasBorders', 'hasControls'])
     store.commit('canvas/updateShape', updatedShape)
   }
 
+
+// метод изменения размера активного объекта
+const resizeActiveObject = (direction) => {
+  const activeObject = canvasRender.value.getActiveObject()
+  if (activeObject) {
+    const scaleX = activeObject.scaleX
+    const scaleY = activeObject.scaleY
+    activeObject.set({
+      scaleX: direction === 'increase' ? scaleX * 1.1 : scaleX * 0.9,
+      scaleY: direction === 'increase' ? scaleY * 1.1 : scaleY * 0.9
+    })
+    canvasRender.value.renderAll()
+  }
+}
+
+// метод вращения активного объекта
+const rotateActiveObject = (direction) => {
+  const activeObject = canvasRender.value.getActiveObject()
+  if (activeObject) {
+    const rotation = activeObject.angle || 0
+    activeObject.set({
+      angle: direction === 'clockwise' ? rotation + 10 : rotation - 10
+    })
+    canvasRender.value.renderAll()
+  }
+}
 
   // удаление объекта
   const deleteObject = () => {
@@ -167,7 +202,17 @@
   const handleKeyDown = (event) => {
     if (event.key === 'Delete') {
       deleteObject()
-    }
+    } else if (event.key === 'ArrowUp') {
+    resizeActiveObject('increase')
+  } else if (event.key === 'ArrowDown') {
+    resizeActiveObject('decrease')
+  } else if (event.key === 'ArrowLeft') {
+    rotateActiveObject('counterclockwise')
+  } else if (event.key === 'ArrowRight') {
+    rotateActiveObject('clockwise')
+  }
+
+
   }
 
   // СЕТКА
@@ -198,6 +243,40 @@
       ctx.fill();
     }
   }
+
+
+  // отслежнивание
+  watchEffect(() => {
+    // if (canvasRender.value) {
+      
+      
+      // Разрешить изменение размера и вращение активного объекта
+    
+      // if (repository.value.activeAction === 'pointer') {
+      //   canvasRender.value.forEachObject((object) => {
+      //     object.set({
+      //       lockMovementX: false,
+      //       lockMovementY: false,
+      //       selectable: true,
+      //       scaleX: true,
+      //       scaleY: true,
+      //       lockRotation: false,
+      //     }) 
+      //   })
+      // } else {
+      //   canvasRender.value.forEachObject((object) => {
+      //     object.set({ 
+      //       lockMovementX: true, 
+      //       lockMovementY: true, 
+      //       selectable: false,
+      //     })
+      //   }) 
+      // }
+
+    //   canvasRender.value.renderAll() 
+    // }
+    
+  })
 
   // монтирование
   onMounted(() => {
