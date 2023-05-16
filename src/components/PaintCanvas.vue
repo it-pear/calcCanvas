@@ -1,16 +1,18 @@
 <template>
   <div class="get-paint">
     <div style="z-index: 3" class="info">{{repository}}</div>
+    <canvas ref="backgroundCanvas"></canvas>
     <canvas ref="canvas"></canvas>
   </div> 
 </template>
 
 <script setup>
   import { fabric } from 'fabric'
+
   import { ref, onMounted, computed } from 'vue'
   import { useStore } from 'vuex'
-  import { createRectangle, createCircle } from 'src/composable/shapes.js'
-  import { updateRectangle, updateCircle } from 'src/composable/shapesModified.js'
+  import { createRectangle, createCircle, createArc } from 'src/composable/shapes.js'
+  import { updateRectangle, updateCircle, updateArc } from 'src/composable/shapesModified.js'
 
   const store = useStore()
   const canvas = ref(null)
@@ -20,7 +22,6 @@
   const startPoints = ref({ x: 0, y: 0 })
   const activeShape = ref(null)
   
-
   // переменные для рисования линий многоугольника
   let linePoints = ref([])
   let activeLine = ref(null)
@@ -37,8 +38,8 @@
     startPoints.value.y = clientY
 
     switch (repository.value.activeAction) {
-      case 'rectangle':
-        activeShape.value = createRectangle(startPoints.value.x, startPoints.value.y)
+      case 'circleline':
+        activeShape.value = createArc(startPoints.value.x, startPoints.value.y)
         break
       case 'rectangle':
         activeShape.value = createRectangle(startPoints.value.x, startPoints.value.y)
@@ -96,6 +97,9 @@
       if (!activeShape.value) return
 
       switch (repository.value.activeAction) {
+        case 'circleline':
+          updateArc(activeShape.value, startPoints.value.x, startPoints.value.y, clientX, clientY)
+          break
         case 'rectangle':
           updateRectangle(activeShape.value, startPoints.value.x, startPoints.value.y, clientX, clientY)
           break
@@ -117,7 +121,7 @@
       activeShape.value.set('id', id)
 
       // Обратите внимание на изменение здесь:
-      const shapeJSON = activeShape.value.toJSON(['id', 'hasBorders', 'hasControls'])
+      const shapeJSON = activeShape.value.toJSON(['id'])
       
       store.commit('canvas/addShape', shapeJSON)
       activeShape.value = null
@@ -166,14 +170,82 @@
     }
   }
 
+  // СЕТКА
+  const backgroundCanvas = ref(null)
+  const gridSize = 10
+  const DotSize = 2
+
+  function getNet() {
+    const ctx = backgroundCanvas.value.getContext('2d');
+
+    // Рисование сетки точек на холсте сетки (backgroundCanvas)
+    backgroundCanvas.value.width = window.innerWidth;
+    backgroundCanvas.value.height = window.innerHeight - 58;
+
+    const canvasWidth = window.innerWidth;
+    const canvasHeight = window.innerHeight - 58;
+
+    for (let x = gridSize; x < canvasWidth; x += gridSize) {
+      for (let y = gridSize; y < canvasHeight; y += gridSize) {
+        drawPoint(ctx, x, y);
+      }
+    }
+
+    function drawPoint(ctx, x, y) {
+      ctx.beginPath();
+      ctx.arc(x, y, DotSize, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0,0,0,0.5)';
+      ctx.fill();
+    }
+  }
+
   // монтирование
   onMounted(() => {
+    getNet()
+
     canvasRender.value = new fabric.Canvas(canvas.value)
     canvasRender.value.setWidth(window.innerWidth)
     canvasRender.value.setHeight(window.innerHeight - 58)
     
-    canvasRender.value.on('mouse:down', handleMouseDown)
-    canvasRender.value.on('mouse:move', handleMouseMove)
+    // canvasRender.value.on('mouse:down', handleMouseDown)
+    // canvasRender.value.on('mouse:move', handleMouseMove)
+
+
+    canvasRender.value.on('mouse:move', (event) => {
+      const { offsetX, offsetY } = event.e
+
+      const x = Math.round(offsetX / gridSize) * gridSize
+      const y = Math.round(offsetY / gridSize) * gridSize
+
+      const distance = Math.sqrt(Math.pow(offsetX - x, 2) + Math.pow(offsetY - y, 2))
+
+      if (distance <= DotSize) {
+        if (repository.value.activeAction === 'cursor') {
+          // вызовите функции для изменения размера и поворота фигур здесь
+        } else {
+          handleMouseMove(event)
+        }
+      }
+    })
+
+    canvasRender.value.on('mouse:down', (event) => {
+      const { offsetX, offsetY } = event.e
+
+      const x = Math.round(offsetX / gridSize) * gridSize
+      const y = Math.round(offsetY / gridSize) * gridSize
+
+      const distance = Math.sqrt(Math.pow(offsetX - x, 2) + Math.pow(offsetY - y, 2))
+
+      if (distance <= DotSize) {
+        if (repository.value.activeAction === 'cursor') {
+          // вызовите функции для изменения размера и поворота фигур здесь
+        } else {
+          handleMouseDown(event)
+        }
+      }
+    })
+
+
     canvasRender.value.on('mouse:up', handleMouseUp)
 
     canvasRender.value.on('object:modified', handleObjectModified)

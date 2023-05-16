@@ -19,3 +19,17 @@ export const createCircle = (startX, startY, fillColor = 'blue') => {
   })
 }
 
+export const createArc = (startX, startY, strokeColor = 'green') => {
+  return new fabric.Circle({
+    left: startX,
+    top: startY,
+    radius: 0,
+    startAngle: 0,
+    endAngle: 0,
+    stroke: strokeColor,
+    strokeWidth: 2,
+    fill: '',
+    originX: 'center',
+    originY: 'center',
+  });
+}

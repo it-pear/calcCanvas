@@ -13,8 +13,12 @@
   right: 17px;
   top: 14px;
   height: max-content;
+  background: rgba(0,0,0,0);
   .header {
     width: 100%;
+    & > .q-btn:first-child {
+      background: white !important;
+    }
   }
   .q-drawer__content {
     overflow: visible;
