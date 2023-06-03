@@ -1,6 +1,7 @@
 <template>
   <div class="get-paint">
     <div style="z-index: 3" class="info">{{repository}}</div>
+    <canvas id="backgroundGridCanvas" ref="backgroundGridCanvas"></canvas> <!-- Новый холст -->
     <canvas ref="backgroundCanvas"></canvas>
     <canvas ref="canvas"></canvas>
   </div> 
@@ -33,86 +34,98 @@
     //   return
     // }
     
+    const { offsetX, offsetY } = options.e
 
-    const { clientX, clientY } = options.e
-    startPoints.value.x = clientX
-    startPoints.value.y = clientY
+    const x = Math.round(offsetX / gridSize) * gridSize
+    const y = Math.round(offsetY / gridSize) * gridSize
 
-    switch (repository.value.activeAction) {
-      case 'circleline':
-        activeShape.value = createArc(startPoints.value.x, startPoints.value.y)
-        break
-      case 'rectangle':
-        activeShape.value = createRectangle(startPoints.value.x, startPoints.value.y)
-        break
-      case 'circle':
-        activeShape.value = createCircle(startPoints.value.x, startPoints.value.y)
-        break
-      case 'pencil':
-        if (isDrawing.value && activeLine.value) {
-          if (Math.abs(clientX - linePoints.value[0].x) < 50 && Math.abs(clientY - linePoints.value[0].y) < 50) {
-            // Завершить рисунок, если мы вернулись к исходной точке
-            isDrawing.value = false
-            activeShape.value = new fabric.Polygon(linePoints.value, { fill: 'transparent', stroke: 'blue' })
+    const distance = Math.sqrt(Math.pow(offsetX - x, 2) + Math.pow(offsetY - y, 2))
 
-            canvasRender.value.add(activeShape.value)
-            canvasRender.value.remove(activeLine.value)  // удаляем активную линию
-            linePoints.value = []
-            activeLine.value = null
-
-          } else {
-            linePoints.value.push({ x: clientX, y: clientY })
-            activeLine.value.set({ x2: clientX, y2: clientY })
-            activeLine.value = new fabric.Line([clientX, clientY, clientX, clientY], { stroke: 'blue', selectable: false }) // создаем новую линию
-            canvasRender.value.add(activeLine.value) // добавляем новую линию на холст
-          }
-        } else {
-          isDrawing.value = true
-          linePoints.value.push({ x: clientX, y: clientY })
-          activeLine.value = new fabric.Line([clientX, clientY, clientX, clientY], { stroke: 'blue', selectable: false })
-          canvasRender.value.add(activeLine.value)
-        }
-        break
-      default:
-        console.error(`Unknown shape type: ${repository.value.activeAction}`)
-        return
-    }
-
-    if (activeShape.value) {
-      canvasRender.value.add(activeShape.value)
-    }
-  }
- 
-  // функция перемещения мыши при создании объекта
-  const handleMouseMove = (options) => {
-    // if (canvasRender.value.getActiveObject()) {
-    //   return
-    // }
-
-    const { clientX, clientY } = options.e
-
-    if (repository.value.activeAction === 'pencil' && isDrawing.value && activeLine.value) {
-      activeLine.value.set({ x2: clientX, y2: clientY })
-      canvasRender.value.renderAll()
-    } else {
-      if (!activeShape.value) return
+    if (distance <= DotSize) {
+      startPoints.value.x = x;
+      startPoints.value.y = y;
 
       switch (repository.value.activeAction) {
         case 'circleline':
-          updateArc(activeShape.value, startPoints.value.x, startPoints.value.y, clientX, clientY)
+          activeShape.value = createArc(x, y)
           break
         case 'rectangle':
-          updateRectangle(activeShape.value, startPoints.value.x, startPoints.value.y, clientX, clientY)
+          activeShape.value = createRectangle(x, y)
           break
         case 'circle':
-          updateCircle(activeShape.value, startPoints.value.x, startPoints.value.y, clientX, clientY)
+          activeShape.value = createCircle(x, y)
+          break
+        case 'pencil':
+          if (isDrawing.value && activeLine.value) {
+            if (Math.abs(x - linePoints.value[0].x) < 50 && Math.abs(y - linePoints.value[0].y) < 50) {
+              // Завершить рисунок, если мы вернулись к исходной точке
+              isDrawing.value = false
+              activeShape.value = new fabric.Polygon(linePoints.value, { fill: 'transparent', stroke: 'blue' })
+
+              canvasRender.value.add(activeShape.value)
+              canvasRender.value.remove(activeLine.value)  // удаляем активную линию
+              linePoints.value = []
+              activeLine.value = null
+
+            } else {
+              linePoints.value.push({ x: x, y: y })
+              activeLine.value.set({ x2: x, y2: y })
+              activeLine.value = new fabric.Line([x, y, x, y], { stroke: 'blue', selectable: false }) // создаем новую линию
+              canvasRender.value.add(activeLine.value) // добавляем новую линию на холст
+            }
+          } else {
+            isDrawing.value = true
+            linePoints.value.push({ x: x, y: y })
+            activeLine.value = new fabric.Line([x, y, x, y], { stroke: 'blue', selectable: false })
+            canvasRender.value.add(activeLine.value)
+          }
           break
         default:
           console.error(`Unknown shape type: ${repository.value.activeAction}`)
           return
       }
+
+      if (activeShape.value) {
+        canvasRender.value.add(activeShape.value)
+      }
     }
-    canvasRender.value.renderAll()
+  }
+
+ 
+  // функция перемещения мыши при создании объекта
+  const handleMouseMove = (options) => {
+    const { offsetX, offsetY } = options.e
+
+    const x = Math.round(offsetX / gridSize) * gridSize
+    const y = Math.round(offsetY / gridSize) * gridSize
+
+    const distance = Math.sqrt(Math.pow(offsetX - x, 2) + Math.pow(offsetY - y, 2))
+
+    if (distance <= DotSize) {
+      if (repository.value.activeAction === 'pencil' && isDrawing.value && activeLine.value) {
+        activeLine.value.set({ x2: x, y2: y })
+        canvasRender.value.renderAll()
+      } else {
+        if (!activeShape.value) return
+
+        switch (repository.value.activeAction) {
+          case 'circleline':
+            updateArc(activeShape.value, startPoints.value.x, startPoints.value.y, x, y)
+            break
+          case 'rectangle':
+            updateRectangle(activeShape.value, startPoints.value.x, startPoints.value.y, x, y)
+            break
+          case 'circle':
+            updateCircle(activeShape.value, startPoints.value.x, startPoints.value.y, x, y)
+            break
+          default:
+            console.error(`Unknown shape type: ${repository.value.activeAction}`)
+            return
+        }
+      }
+
+      canvasRender.value.renderAll()
+    }
   }
 
   // функция отклика мыши при создании нового объекта
@@ -202,23 +215,22 @@ const rotateActiveObject = (direction) => {
   const handleKeyDown = (event) => {
     if (event.key === 'Delete') {
       deleteObject()
-    } else if (event.key === 'ArrowUp') {
-    resizeActiveObject('increase')
-  } else if (event.key === 'ArrowDown') {
-    resizeActiveObject('decrease')
-  } else if (event.key === 'ArrowLeft') {
-    rotateActiveObject('counterclockwise')
-  } else if (event.key === 'ArrowRight') {
-    rotateActiveObject('clockwise')
-  }
-
+      } else if (event.key === 'ArrowUp') {
+      resizeActiveObject('increase')
+    } else if (event.key === 'ArrowDown') {
+      resizeActiveObject('decrease')
+    } else if (event.key === 'ArrowLeft') {
+      rotateActiveObject('counterclockwise')
+    } else if (event.key === 'ArrowRight') {
+      rotateActiveObject('clockwise')
+    }
 
   }
 
   // СЕТКА
   const backgroundCanvas = ref(null)
   const gridSize = 10
-  const DotSize = 2
+  const DotSize = 6
 
   function getNet() {
     const ctx = backgroundCanvas.value.getContext('2d');
@@ -239,44 +251,30 @@ const rotateActiveObject = (direction) => {
     function drawPoint(ctx, x, y) {
       ctx.beginPath();
       ctx.arc(x, y, DotSize, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(0,0,0,0.5)';
+      ctx.fillStyle = 'rgba(0,0,0,0)';
       ctx.fill();
     }
   }
 
+  // интерактивная сетка
+  const backgroundGridCanvas = ref(null)
+  const drawGrid = () => {
+    const ctx = backgroundGridCanvas.value.getContext('2d')
 
-  // отслежнивание
-  watchEffect(() => {
-    // if (canvasRender.value) {
-      
-      
-      // Разрешить изменение размера и вращение активного объекта
-    
-      // if (repository.value.activeAction === 'pointer') {
-      //   canvasRender.value.forEachObject((object) => {
-      //     object.set({
-      //       lockMovementX: false,
-      //       lockMovementY: false,
-      //       selectable: true,
-      //       scaleX: true,
-      //       scaleY: true,
-      //       lockRotation: false,
-      //     }) 
-      //   })
-      // } else {
-      //   canvasRender.value.forEachObject((object) => {
-      //     object.set({ 
-      //       lockMovementX: true, 
-      //       lockMovementY: true, 
-      //       selectable: false,
-      //     })
-      //   }) 
-      // }
+    const canvasWidth = window.innerWidth
+    const canvasHeight = window.innerHeight - 58
 
-    //   canvasRender.value.renderAll() 
-    // }
-    
-  })
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight) // Очищаем предыдущую сетку
+
+    for (let x = gridSize; x < canvasWidth; x += gridSize) {
+      for (let y = gridSize; y < canvasHeight; y += gridSize) {
+        ctx.beginPath()
+        ctx.arc(x, y, 1, 0, Math.PI * 2)  // Размер точек сетки
+        ctx.fillStyle = 'rgba(0,0,0,0.5)'  // Цвет точек сетки
+        ctx.fill()
+      }
+    }
+  }
 
   // монтирование
   onMounted(() => {
@@ -329,6 +327,11 @@ const rotateActiveObject = (direction) => {
 
     canvasRender.value.on('object:modified', handleObjectModified)
     window.addEventListener('keydown', handleKeyDown)
+
+    backgroundGridCanvas.value.width = window.innerWidth
+    backgroundGridCanvas.value.height = window.innerHeight - 58
+
+    drawGrid()
 
   })
 </script>
