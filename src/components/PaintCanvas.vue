@@ -149,7 +149,6 @@
   const redrawCanvas = () => {
 
     canvasRender.value.clear() 
-
     const shapes = store.state.canvas.shapes 
 
     fabric.util.enlivenObjects(shapes, (objects) => {
@@ -160,14 +159,11 @@
           uniScaleTransform: false
         })
         
-
         shape.setControlsVisibility(true)
-
         canvasRender.value.add(shape)
       })
     })
 
-    
   }
 
 
