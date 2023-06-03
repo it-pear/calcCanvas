@@ -143,6 +143,7 @@
             v-for="color in colors"
             :key="color"
             :style="`background: ${color}`"
+            @click="pouringSet(color)"
           />
         </q-list>
       </q-menu>
@@ -277,6 +278,10 @@
   // установка текущего инструмента
   const customCurrentFunction = () => {
     store.commit('canvas/currentFunction', tab.value)
+  }
+
+  const pouringSet = (val) => {
+    store.commit('canvas/pouringSet', val)
   }
 
   // function clickOut() {

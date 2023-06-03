@@ -3,5 +3,6 @@ export default function () {
     activeAction: null,
     shapes: [],
     nextId: 0,
+    pouringColor: null
   }
 }

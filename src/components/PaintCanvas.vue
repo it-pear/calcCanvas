@@ -1,7 +1,7 @@
 <template>
   <div class="get-paint">
-    <div style="z-index: 3" class="info">{{repository}}</div>
-    <canvas id="backgroundGridCanvas" ref="backgroundGridCanvas"></canvas> <!-- Новый холст -->
+    <!-- <div style="z-index: 3" class="info">{{repository}}</div> -->
+    <canvas id="backgroundGridCanvas" ref="backgroundGridCanvas"></canvas>
     <canvas ref="backgroundCanvas"></canvas>
     <canvas ref="canvas"></canvas>
   </div> 
@@ -10,7 +10,7 @@
 <script setup>
   import { fabric } from 'fabric'
 
-  import { ref, onMounted, computed, watchEffect } from 'vue'
+  import { ref, onMounted, computed } from 'vue'
   import { useStore } from 'vuex'
   import { createRectangle, createCircle, createArc } from 'src/composable/shapes.js'
   import { updateRectangle, updateCircle, updateArc } from 'src/composable/shapesModified.js'
@@ -21,10 +21,10 @@
   const canvasRender = ref(null)
 
   const startPoints = ref({ x: 0, y: 0 })
-  const activeShape = ref(null)
+  const activeShape = ref(null) 
   
   // переменные для рисования линий многоугольника
-  let linePoints = ref([])
+  let linePoints = ref([]) 
   let activeLine = ref(null)
   let isDrawing = ref(false)
 
@@ -37,56 +37,80 @@
     const { offsetX, offsetY } = options.e
 
     const x = Math.round(offsetX / gridSize) * gridSize
-    const y = Math.round(offsetY / gridSize) * gridSize
+    const y = Math.round(offsetY / gridSize) * gridSize 
 
     const distance = Math.sqrt(Math.pow(offsetX - x, 2) + Math.pow(offsetY - y, 2))
 
     if (distance <= DotSize) {
-      startPoints.value.x = x;
-      startPoints.value.y = y;
+      if (repository.value.activeAction === 'pouring' && repository.value.pouringColor !== null) {
+        const { offsetX, offsetY } = options.e
 
-      switch (repository.value.activeAction) {
-        case 'circleline':
-          activeShape.value = createArc(x, y)
-          break
-        case 'rectangle':
-          activeShape.value = createRectangle(x, y)
-          break
-        case 'circle':
-          activeShape.value = createCircle(x, y)
-          break
-        case 'pencil':
-          if (isDrawing.value && activeLine.value) {
-            if (Math.abs(x - linePoints.value[0].x) < 50 && Math.abs(y - linePoints.value[0].y) < 50) {
-              // Завершить рисунок, если мы вернулись к исходной точке
-              isDrawing.value = false
-              activeShape.value = new fabric.Polygon(linePoints.value, { fill: 'transparent', stroke: 'blue' })
+        const x = Math.round(offsetX / gridSize) * gridSize
+        const y = Math.round(offsetY / gridSize) * gridSize
 
-              canvasRender.value.add(activeShape.value)
-              canvasRender.value.remove(activeLine.value)  // удаляем активную линию
-              linePoints.value = []
-              activeLine.value = null
+        const targetObject = canvasRender.value.getObjects().find(obj => obj.containsPoint(new fabric.Point(x, y)))
 
+        if (targetObject) {
+          targetObject.set({ fill: repository.value.pouringColor })
+          // Обновляем объект
+          targetObject.dirty = true
+
+          // Сбрасываем активный объект
+          canvasRender.value.discardActiveObject().requestRenderAll()
+
+          // Сохраняем обновленный объект в хранилище
+          const updatedShape = targetObject.toJSON(['id', 'hasBorders', 'hasControls'])
+          store.commit('canvas/updateShape', updatedShape)
+
+          // handleMouseUp() 
+        }
+      } else {
+        startPoints.value.x = x;
+        startPoints.value.y = y; 
+
+        switch (repository.value.activeAction) {
+          case 'circleline':
+            activeShape.value = createArc(x, y)
+            break
+          case 'rectangle':
+            activeShape.value = createRectangle(x, y)
+            break
+          case 'circle':
+            activeShape.value = createCircle(x, y)
+            break
+          case 'pencil':
+            if (isDrawing.value && activeLine.value) {
+              if (Math.abs(x - linePoints.value[0].x) < 50 && Math.abs(y - linePoints.value[0].y) < 50) {
+                // Завершить рисунок, если мы вернулись к исходной точке
+                isDrawing.value = false
+                activeShape.value = new fabric.Polygon(linePoints.value, { fill: 'transparent', stroke: 'blue' })
+
+                canvasRender.value.add(activeShape.value)
+                canvasRender.value.remove(activeLine.value)  // удаляем активную линию
+                linePoints.value = []
+                activeLine.value = null
+
+              } else {
+                linePoints.value.push({ x: x, y: y })
+                activeLine.value.set({ x2: x, y2: y })
+                activeLine.value = new fabric.Line([x, y, x, y], { stroke: 'blue', selectable: false }) // создаем новую линию
+                canvasRender.value.add(activeLine.value) // добавляем новую линию на холст
+              }
             } else {
+              isDrawing.value = true
               linePoints.value.push({ x: x, y: y })
-              activeLine.value.set({ x2: x, y2: y })
-              activeLine.value = new fabric.Line([x, y, x, y], { stroke: 'blue', selectable: false }) // создаем новую линию
-              canvasRender.value.add(activeLine.value) // добавляем новую линию на холст
+              activeLine.value = new fabric.Line([x, y, x, y], { stroke: 'blue', selectable: false })
+              canvasRender.value.add(activeLine.value)
             }
-          } else {
-            isDrawing.value = true
-            linePoints.value.push({ x: x, y: y })
-            activeLine.value = new fabric.Line([x, y, x, y], { stroke: 'blue', selectable: false })
-            canvasRender.value.add(activeLine.value)
-          }
-          break
-        default:
-          console.error(`Unknown shape type: ${repository.value.activeAction}`)
-          return
-      }
+            break
+          default:
+            console.error(`Unknown shape type: ${repository.value.activeAction}`)
+            return
+        }
 
-      if (activeShape.value) {
-        canvasRender.value.add(activeShape.value)
+        if (activeShape.value) {
+          canvasRender.value.add(activeShape.value)
+        }
       }
     }
   }
@@ -142,7 +166,7 @@
 
       redrawCanvas()
     }
-  }
+  } 
 
 
   // функция перерисовки холста 

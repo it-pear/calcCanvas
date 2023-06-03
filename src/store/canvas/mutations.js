@@ -5,6 +5,10 @@ export default {
     state.activeAction = val
   },
 
+  pouringSet(state, val) {
+    state.pouringColor = val
+  },
+
   // Добавление новой фигуры в массив
   addShape(state, shape) {
     shape.id = state.nextId
