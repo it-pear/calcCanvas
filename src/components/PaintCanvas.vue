@@ -1,6 +1,6 @@
 <template>
   <div class="get-paint">
-    <!-- <div style="z-index: 3" class="info">{{repository}}</div> -->
+    <div style="z-index: 3" class="info">{{repository}}</div>
     <canvas id="backgroundGridCanvas" ref="backgroundGridCanvas"></canvas>
     <canvas ref="backgroundCanvas"></canvas>
     <canvas ref="canvas"></canvas>
@@ -180,14 +180,13 @@
         shape.set({
           hasBorders: true,
           hasControls: true,
-          uniScaleTransform: false
+          uniScaleTransform: false,
         })
         
         shape.setControlsVisibility(true)
         canvasRender.value.add(shape)
       })
     })
-
   }
 
 
@@ -303,7 +302,9 @@ const rotateActiveObject = (direction) => {
     canvasRender.value = new fabric.Canvas(canvas.value)
     canvasRender.value.setWidth(window.innerWidth)
     canvasRender.value.setHeight(window.innerHeight - 58)
-    
+
+    redrawCanvas()
+
     // canvasRender.value.on('mouse:down', handleMouseDown)
     // canvasRender.value.on('mouse:move', handleMouseMove)
 
@@ -318,7 +319,6 @@ const rotateActiveObject = (direction) => {
 
       if (distance <= DotSize) {
         if (repository.value.activeAction === 'cursor') {
-          // вызовите функции для изменения размера и поворота фигур здесь
         } else {
           handleMouseMove(event)
         }
@@ -333,13 +333,34 @@ const rotateActiveObject = (direction) => {
 
       const distance = Math.sqrt(Math.pow(offsetX - x, 2) + Math.pow(offsetY - y, 2))
 
-      if (distance <= DotSize) {
-        if (repository.value.activeAction === 'cursor') {
-          // вызовите функции для изменения размера и поворота фигур здесь
-        } else {
-          handleMouseDown(event)
-        }
+      // canvasRender.value.forEachObject((obj) => {
+      //   obj.lockMovementX = false
+      //   obj.lockMovementY = false
+      //   obj.lockScalingX = false
+      //   obj.lockScalingY = false
+      //   obj.lockRotation = false
+      //   obj.hasControls = true
+      //   obj.hasBorders = true
+      // })
+      if (repository.value.activeAction === 'cursor') {
+        // разблокировать перемещение, масштабирование и поворот объектов
+
+      } else { 
+      // блокировать перемещение, масштабирование и поворот объектов
+        canvasRender.value.forEachObject((obj) => {
+          obj.lockMovementX = true
+          obj.lockMovementY = true
+          obj.lockScalingX = true
+          obj.lockScalingY = true
+          obj.lockRotation = true
+          obj.hasControls = false
+          obj.hasBorders = false
+        })
+
+        handleMouseDown(event)
       }
+        
+      
     })
 
 
