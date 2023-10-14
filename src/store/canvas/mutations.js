@@ -12,7 +12,7 @@ export default {
   // Добавление новой фигуры в массив
   addShape(state, shape) {
     shape.id = state.nextId
-    state.shapes.push(shape) 
+    state.shapes.push(shape)
     state.nextId++
   },
 
