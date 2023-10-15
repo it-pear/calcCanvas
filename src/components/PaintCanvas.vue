@@ -14,14 +14,21 @@
   import { useStore } from 'vuex'
   import { createRectangle, createCircle, createArc } from 'src/composable/shapes.js'
   import { updateRectangle, updateCircle, updateArc } from 'src/composable/shapesModified.js'
+  import { getNet, drawGrid } from 'src/composables/grid.js'
 
   const store = useStore()
   const canvas = ref(null)
   const repository = computed(() => store.state.canvas)
   const canvasRender = ref(null)
 
-  let isResizing = false;  // Флаг, указывающий на то, растягивается ли объект
-  let activeEdge = null;
+  const backgroundGridCanvas = ref(null)
+  const backgroundCanvas = ref(null)
+
+  let isResizing = false  // Флаг, указывающий на то, растягивается ли объект
+  let activeEdge = null
+
+  const gridSize = 10
+  const DotSize = 6
 
   const startPoints = ref({ x: 0, y: 0 })
   const activeShape = ref(null)
@@ -68,8 +75,8 @@
           handleMouseUp()
         }
       } else {
-        startPoints.value.x = x;
-        startPoints.value.y = y;
+        startPoints.value.x = x
+        startPoints.value.y = y
 
         switch (repository.value.activeAction) {
           case 'circleline':
@@ -174,7 +181,6 @@
 
   // функция перерисовки холста
   const redrawCanvas = () => {
-
     canvasRender.value.clear()
     const shapes = store.state.canvas.shapes
 
@@ -230,94 +236,55 @@
     const activeObject = canvasRender.value.getActiveObject();
     if (!activeObject) return;
 
+    // Отключаем стандартное механизм изменения размера
+    activeObject.lockScalingX = true;
+    activeObject.lockScalingY = true;
+
     const { offsetX, offsetY } = event.e;
     const boundingRect = activeObject.getBoundingRect();
 
-    // Проверяем, наведен ли курсор на края объекта
+    // Определение активного края
     if (offsetX >= boundingRect.left && offsetX <= boundingRect.left + boundingRect.width) {
-        if (Math.abs(offsetY - boundingRect.top) < 10) {
-            isResizing = true;
-            activeEdge = 'top';
-        } else if (Math.abs(offsetY - (boundingRect.top + boundingRect.height)) < 10) {
-            isResizing = true;
-            activeEdge = 'bottom';
-        }
+      if (Math.abs(offsetY - boundingRect.top) < 10) {
+        isResizing = true;
+        activeEdge = 'top';
+      } else if (Math.abs(offsetY - (boundingRect.top + boundingRect.height)) < 10) {
+        isResizing = true;
+        activeEdge = 'bottom';
+      }
     }
 
     if (offsetY >= boundingRect.top && offsetY <= boundingRect.top + boundingRect.height) {
-        if (Math.abs(offsetX - boundingRect.left) < 10) {
-            isResizing = true;
-            activeEdge = 'left';
-        } else if (Math.abs(offsetX - (boundingRect.left + boundingRect.width)) < 10) {
-            isResizing = true;
-            activeEdge = 'right';
-        }
+      if (Math.abs(offsetX - boundingRect.left) < 10) {
+        isResizing = true;
+        activeEdge = 'left';
+      } else if (Math.abs(offsetX - (boundingRect.left + boundingRect.width)) < 10) {
+        isResizing = true;
+        activeEdge = 'right';
+      }
     }
 
     // Если активен процесс изменения размера, запретить перемещение объекта
     if (isResizing) {
-        activeObject.lockMovementX = true;
-        activeObject.lockMovementY = true;
+      activeObject.lockMovementX = true;
+      activeObject.lockMovementY = true;
     }
-}
-
-  const handleResizeMouseMove = (event) => {
-    const activeObject = canvasRender.value.getActiveObject();
-    if (!activeObject || !isResizing) return;
-
-    const { offsetX, offsetY } = event.e;
-    const boundingRect = activeObject.getBoundingRect();
-    const originalWidth = boundingRect.width / activeObject.scaleX;
-    const originalHeight = boundingRect.height / activeObject.scaleY;
-
-    switch (activeEdge) {
-      case 'top':
-        const deltaYTop = offsetY - boundingRect.top;
-        const newScaleYTop = deltaYTop / originalHeight;
-        activeObject.set({
-            scaleY: newScaleYTop
-        });
-        break;
-      case 'bottom':
-        const deltaYBottom = offsetY - boundingRect.top;
-        const newScaleYBottom = deltaYBottom / originalHeight;
-        activeObject.set({
-            scaleY: newScaleYBottom
-        });
-        break;
-      case 'left':
-        const deltaXLeft = offsetX - boundingRect.left;
-        const newScaleXLeft = deltaXLeft / originalWidth;
-        activeObject.set({
-            scaleX: newScaleXLeft
-        });
-        break;
-      case 'right':
-        const deltaXRight = offsetX - boundingRect.left;
-        const newScaleXRight = deltaXRight / originalWidth;
-        activeObject.set({
-            scaleX: newScaleXRight
-        });
-        break;
-    }
-
-    activeObject.setCoords();  // Обновляем координаты объекта
-    canvasRender.value.renderAll();
   }
 
   const handleResizeMouseUp = () => {
-    const activeObject = canvasRender.value.getActiveObject();
+    const activeObject = canvasRender.value.getActiveObject()
     if (activeObject) {
       // Разрешаем перемещение объекта
-      activeObject.lockMovementX = false;
-      activeObject.lockMovementY = false;
+      activeObject.lockMovementX = false
+      activeObject.lockMovementY = false
 
       // Сохраняем измененный объект в хранилище
-      handleObjectModified({ target: activeObject });
+      handleObjectModified({ target: activeObject })
+      activeObject.set({ originX: 'left', originY: 'top' });
     }
 
-    isResizing = false;
-    activeEdge = null;
+    isResizing = false
+    activeEdge = null
   }
 
   // удаление объекта
@@ -340,61 +307,11 @@
     } else if (event.key === 'ArrowRight') {
       rotateActiveObject('clockwise')
     }
-
-  }
-
-  // СЕТКА
-  const backgroundCanvas = ref(null)
-  const gridSize = 10
-  const DotSize = 6
-
-  function getNet() {
-    const ctx = backgroundCanvas.value.getContext('2d');
-
-    // Рисование сетки точек на холсте сетки (backgroundCanvas)
-    backgroundCanvas.value.width = window.innerWidth;
-    backgroundCanvas.value.height = window.innerHeight - 58;
-
-    const canvasWidth = window.innerWidth;
-    const canvasHeight = window.innerHeight - 58;
-
-    for (let x = gridSize; x < canvasWidth; x += gridSize) {
-      for (let y = gridSize; y < canvasHeight; y += gridSize) {
-        drawPoint(ctx, x, y);
-      }
-    }
-
-    function drawPoint(ctx, x, y) {
-      ctx.beginPath();
-      ctx.arc(x, y, DotSize, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(0,0,0,0)';
-      ctx.fill();
-    }
-  }
-
-  // интерактивная сетка
-  const backgroundGridCanvas = ref(null)
-  const drawGrid = () => {
-    const ctx = backgroundGridCanvas.value.getContext('2d')
-
-    const canvasWidth = window.innerWidth
-    const canvasHeight = window.innerHeight - 58
-
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight) // Очищаем предыдущую сетку
-
-    for (let x = gridSize; x < canvasWidth; x += gridSize) {
-      for (let y = gridSize; y < canvasHeight; y += gridSize) {
-        ctx.beginPath()
-        ctx.arc(x, y, 1, 0, Math.PI * 2)  // Размер точек сетки
-        ctx.fillStyle = 'rgba(0,0,0,0.5)'  // Цвет точек сетки
-        ctx.fill()
-      }
-    }
   }
 
   // монтирование
   onMounted(() => {
-    getNet()
+    getNet(backgroundCanvas, gridSize, DotSize)
 
     canvasRender.value = new fabric.Canvas(canvas.value)
     canvasRender.value.setWidth(window.innerWidth)
@@ -402,106 +319,95 @@
 
     redrawCanvas()
 
-    // canvasRender.value.on('mouse:down', handleMouseDown)
-    // canvasRender.value.on('mouse:move', handleMouseMove)
-
-
     canvasRender.value.on('mouse:down', (event) => {
       if (repository.value.activeAction === 'cursor') {
-          handleResizeMouseDown(event);
+        handleResizeMouseDown(event)
       } else {
           // блокировать перемещение, масштабирование и поворот объектов
         canvasRender.value.forEachObject((obj) => {
-          obj.lockMovementX = true;
-          obj.lockMovementY = true;
-          obj.lockScalingX = true;
-          obj.lockScalingY = true;
-          obj.lockRotation = true;
-          obj.hasControls = false;
-          obj.hasBorders = false;
+          obj.lockMovementX = true
+          obj.lockMovementY = true
+          obj.lockScalingX = true
+          obj.lockScalingY = true
+          obj.lockRotation = true
+          obj.hasControls = false
+          obj.hasBorders = false
         })
         handleMouseDown(event)
       }
     })
 
+
     canvasRender.value.on('mouse:move', (event) => {
-    const { offsetX, offsetY } = event.e;
+      const { offsetX, offsetY } = event.e;
 
-    const x = Math.round(offsetX / gridSize) * gridSize;
-    const y = Math.round(offsetY / gridSize) * gridSize;
+      if (repository.value.activeAction === 'cursor') {
+        const activeObject = canvasRender.value.getActiveObject();
+        if (isResizing && activeObject) {
+          const boundingRect = activeObject.getBoundingRect();
 
-    const distance = Math.sqrt(Math.pow(offsetX - x, 2) + Math.pow(offsetY - y, 2));
+          switch (activeEdge) {
+            case 'top':
+              const diffYTop = boundingRect.top - offsetY;
+              const newHeightTop = boundingRect.height + diffYTop;
+              activeObject.set({
+                scaleY: newHeightTop / (boundingRect.height / activeObject.scaleY),
+                top: activeObject.top - diffYTop / 2
+              });
+              break;
+            case 'bottom':
+              const diffYBottom = offsetY - (boundingRect.top + boundingRect.height);
+              const newHeightBottom = boundingRect.height + diffYBottom;
+              activeObject.set({
+                scaleY: newHeightBottom / (boundingRect.height / activeObject.scaleY)
+              });
+              break;
+            case 'left':
+              const diffXLeft = boundingRect.left - offsetX;
+              const newWidthLeft = boundingRect.width + diffXLeft;
+              activeObject.set({
+                scaleX: newWidthLeft / (boundingRect.width / activeObject.scaleX),
+                left: activeObject.left - diffXLeft / 2,
+              })
+              break;
+            case 'right':
+              const diffXRight = offsetX - (boundingRect.left + boundingRect.width);
+              const newWidthRight = boundingRect.width + diffXRight;
+              activeObject.set({
+                scaleX: newWidthRight / (boundingRect.width / activeObject.scaleX)
+              });
+              break;
+          }
 
-    if (distance <= DotSize) {
-        if (repository.value.activeAction === 'cursor') {
-            const activeObject = canvasRender.value.getActiveObject();
-            if (isResizing && activeObject) {
-                const boundingRect = activeObject.getBoundingRect();
-
-                // Начальные размеры объекта (при его создании)
-                const originalWidth = boundingRect.width / activeObject.scaleX;
-                const originalHeight = boundingRect.height / activeObject.scaleY;
-
-                switch (activeEdge) {
-                  case 'top':
-                    const scaleYTop = (originalHeight + (boundingRect.top - offsetY)) / originalHeight;
-                    activeObject.set({
-                        top: offsetY,
-                        scaleY: scaleYTop
-                    });
-                    break;
-                  case 'bottom':
-                    const scaleYBottom = (offsetY - boundingRect.top) / originalHeight;
-                    activeObject.set({
-                        scaleY: scaleYBottom
-                    });
-                    break;
-                  case 'left':
-                    const scaleXLeft = (originalWidth + (boundingRect.left - offsetX)) / originalWidth;
-                    activeObject.set({
-                        left: offsetX,
-                        scaleX: scaleXLeft
-                    });
-                    break;
-                  case 'right':
-                    const scaleXRight = (offsetX - boundingRect.left) / originalWidth;
-                    activeObject.set({
-                        scaleX: scaleXRight
-                    });
-                    break;
-                }
-
-                activeObject.setCoords();  // Обновляем координаты объекта
-                canvasRender.value.renderAll();
-            } else {
-                handleResizeMouseMove(event);
-            }
-        } else {
-            handleMouseMove(event);
+          activeObject.setCoords();
+          canvasRender.value.renderAll();
         }
-    }
-});
+      } else {
+        handleMouseMove(event);
+      }
+    });
 
     canvasRender.value.on('mouse:up', (event) => {
-        handleMouseUp(event);
-        handleResizeMouseUp(event); // Этот обработчик просто сбрасывает флаги, поэтому его безопасно вызывать всегда
+      handleMouseUp(event)
+      handleResizeMouseUp(event) // Этот обработчик просто сбрасывает флаги, поэтому его безопасно вызывать всегда
     })
 
     canvasRender.value.on('mouse:over', (event) => {
-      const { offsetX, offsetY } = event.e;
-      const activeObject = canvasRender.value.getActiveObject();
-      if (!activeObject) return;
+      const { offsetX, offsetY } = event.e
+      const activeObject = canvasRender.value.getActiveObject()
+      if (!activeObject) return
 
-      const boundingRect = activeObject.getBoundingRect();
+      const boundingRect = activeObject.getBoundingRect()
 
       // Проверяем, наведен ли курсор на края объекта, и меняем курсор соответственно
       if (Math.abs(offsetY - boundingRect.top) < 10 || Math.abs(offsetY - (boundingRect.top + boundingRect.height)) < 10) {
-        canvasRender.value.defaultCursor = 'ns-resize';
+        activeObject.hoverCursor = 'ns-resize'
       } else if (Math.abs(offsetX - boundingRect.left) < 10 || Math.abs(offsetX - (boundingRect.left + boundingRect.width)) < 10) {
-        canvasRender.value.defaultCursor = 'ew-resize';
+        activeObject.hoverCursor = 'ew-resize'
       } else {
-        canvasRender.value.defaultCursor = 'default';
+        activeObject.hoverCursor = 'default'
       }
+      canvasRender.value.renderAll()
     })
 
     canvasRender.value.on('object:modified', handleObjectModified)
@@ -510,7 +416,7 @@
     backgroundGridCanvas.value.width = window.innerWidth
     backgroundGridCanvas.value.height = window.innerHeight - 58
 
-    drawGrid()
+    drawGrid(backgroundGridCanvas, gridSize, DotSize)
 
   })
 
